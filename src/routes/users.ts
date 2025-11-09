@@ -10,6 +10,9 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
   const url = utils.getURL(req);
   const pathname = url.pathname;
   const pathnameParts = pathname.split('/');
+  res.on('finish', () => {
+    console.log('response is sent');
+  });
   if (pathnameParts.length > 3) {
     res.writeHead(404);
     res.end(constants.NOT_FOUND_MESSAGE);
