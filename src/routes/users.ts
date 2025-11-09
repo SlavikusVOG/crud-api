@@ -1,8 +1,9 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
 import { db } from '../db/db.js';
-import type { User } from '../types/user.types.js';
-import utils from "../utils/utils.js";
+import utils from '../utils/utils.js';
+import { constants } from '../constants.js';
+import { validate } from 'uuid'
 
 async function handleRequest(req: IncomingMessage, res: ServerResponse) {
   const method = req.method;
@@ -11,13 +12,32 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
   const pathnameParts = pathname.split('/');
   if (pathnameParts.length > 3) {
     res.writeHead(404);
-    res.end('Not found')
+    res.end(constants.NOT_FOUND_MESSAGE);
   }
+  try {
+
   switch(method) {
     case 'GET': {
-      const users = db.getAll();
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(users));
+      if (pathnameParts.length === 3) {
+        const id = pathnameParts[2];
+        const user = db.getUserById(id);
+        if (!validate(id)) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(constants.INVALID_ID_MESSAGE);
+        }
+        if (user) {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(user));
+        }
+        else {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.end(constants.USER_NOT_FOUND_MESSAGE);
+        }
+      } else {
+        const users = db.getAll();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(users));
+      }
       break;
     }
     case 'POST': {
@@ -29,12 +49,72 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
       const data = JSON.parse(body);
       if ('username' in data && 'age' in data && 'hobbies' in data) {
         const user = db.create(data);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(201, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(user));
       }
+      else {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(constants.NO_REQUIRED_FIELDS_MESSAGE);
+      }
+      break;
     }
     case 'DELETE': {
+      if (pathnameParts.length === 3) {
+        const id = pathnameParts[2];
+        if (!validate(id)) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(constants.INVALID_ID_MESSAGE);
+          break;
+        }
+        const deleteFlag = db.delete(id);
+        if (deleteFlag) {
+          res.writeHead(204, { 'Content-Type': 'application/json' });
+          res.end();
+        }
+        else {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.end(constants.USER_NOT_FOUND_MESSAGE);
+        }
+      }
+      else {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(constants.NOT_FOUND_MESSAGE);
+      }
+      break;
     }
+    case 'PUT': {
+      if (pathnameParts.length === 3) {
+        const id = pathnameParts[2];
+        if (!validate(id)) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(constants.INVALID_ID_MESSAGE);
+          break;
+        }
+        const chunks: Buffer[] = [];
+        for await (const chunk of req) {
+          chunks.push(chunk);
+        }
+        const body = Buffer.concat(chunks).toString();
+        const data = JSON.parse(body);
+        const user = db.updateUser(id, data)
+        if (user) {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(user));
+        }
+        else {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.end(constants.USER_NOT_FOUND_MESSAGE);
+        }
+      }
+      else {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(constants.NOT_FOUND_MESSAGE);
+      }
+      break;
+    }
+  }
+  } catch {
+    res.writeHead(500, constants.SERVER_ERROR_MESSAGE);
   }
 }
 
