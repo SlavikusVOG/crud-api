@@ -1,0 +1,30 @@
+{
+  "name": "crud-api",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "ts",
+    "crud"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com-SlavikusVOG:SlavikusVOG/crud-api.git"
+  },
+  "license": "ISC",
+  "author": "SlavikusVOG",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --import=tsx index.ts"
+  },
+  "dependencies": {
+    "typescript": "^5.9.3",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "dotenv": "^17.2.3",
+    "tsx": "^4.20.6"
+  }
+}
