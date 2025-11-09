@@ -16,7 +16,7 @@ export class DB {
     return this.users.get(id);
   }
 
-  updateUser(id: string, data: User): User|undefined {
+  updateUser(id: string, data: Omit<User, 'id' | 'username' | 'age' | 'hobbies'>): User|undefined {
     const user = this.users.get(id);
     if (!user) return undefined;
     const updatedUser = { ...user, ...data};
