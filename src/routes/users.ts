@@ -22,7 +22,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
         const id = pathnameParts[2];
         const user = db.getUserById(id);
         if (!validate(id)) {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.writeHead(400);
           res.end(constants.INVALID_ID_MESSAGE);
         }
         if (user) {
@@ -30,7 +30,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
           res.end(JSON.stringify(user));
         }
         else {
-          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.writeHead(404);
           res.end(constants.USER_NOT_FOUND_MESSAGE);
         }
       } else {
@@ -53,7 +53,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
         res.end(JSON.stringify(user));
       }
       else {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.writeHead(400);
         res.end(constants.NO_REQUIRED_FIELDS_MESSAGE);
       }
       break;
@@ -62,22 +62,22 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
       if (pathnameParts.length === 3) {
         const id = pathnameParts[2];
         if (!validate(id)) {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.writeHead(400);
           res.end(constants.INVALID_ID_MESSAGE);
           break;
         }
         const deleteFlag = db.delete(id);
         if (deleteFlag) {
-          res.writeHead(204, { 'Content-Type': 'application/json' });
+          res.writeHead(204);
           res.end();
         }
         else {
-          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.writeHead(404);
           res.end(constants.USER_NOT_FOUND_MESSAGE);
         }
       }
       else {
-        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.writeHead(404);
         res.end(constants.NOT_FOUND_MESSAGE);
       }
       break;
@@ -86,7 +86,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
       if (pathnameParts.length === 3) {
         const id = pathnameParts[2];
         if (!validate(id)) {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.writeHead(400);
           res.end(constants.INVALID_ID_MESSAGE);
           break;
         }
@@ -102,12 +102,12 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
           res.end(JSON.stringify(user));
         }
         else {
-          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.writeHead(404);
           res.end(constants.USER_NOT_FOUND_MESSAGE);
         }
       }
       else {
-        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.writeHead(404);
         res.end(constants.NOT_FOUND_MESSAGE);
       }
       break;
