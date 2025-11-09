@@ -11,7 +11,7 @@ const server = createServer(async(req: IncomingMessage, res: ServerResponse) => 
   const url = utils.getURL(req);
   const pathname = url?.pathname;
   if (pathname.startsWith('/api/users')) {
-    usersRoute.handleRequest(req, res);
+    await usersRoute.handleRequest(req, res);
   }
   res.writeHead(404);
   res.end(constants.NOT_FOUND_MESSAGE);
