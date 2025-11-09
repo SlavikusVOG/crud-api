@@ -114,8 +114,13 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     }
   } catch(error) {
     console.error(error);
-    res.writeHead(500);
-    res.end(constants.SERVER_ERROR_MESSAGE);
+    if (res.headersSent) {
+      console.log('headers already sent');
+    }
+    else {
+      res.writeHead(500);
+      res.end(constants.SERVER_ERROR_MESSAGE);
+    }
   }
 }
 
