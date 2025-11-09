@@ -13,8 +13,10 @@ const server = createServer(async(req: IncomingMessage, res: ServerResponse) => 
   if (pathname.startsWith('/api/users')) {
     await usersRoute.handleRequest(req, res);
   }
-  res.writeHead(404);
-  res.end(constants.NOT_FOUND_MESSAGE);
+  else {
+    res.writeHead(404);
+    res.end(constants.NOT_FOUND_MESSAGE);
+  }
 });
 
 server.listen(PORT, () => {
