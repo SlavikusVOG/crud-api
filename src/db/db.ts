@@ -8,7 +8,7 @@ export class DB {
     return user;
   }
 
-  getUsers(): User[] {
+  getAll(): User[] {
     return Array.from(this.users.values());
   }
 
