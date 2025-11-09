@@ -10,18 +10,15 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
   const url = utils.getURL(req);
   const pathname = url.pathname;
   const pathnameParts = pathname.split('/');
-  res.on('finish', () => {
-    console.log('response is sent');
-  });
-  if (pathnameParts.length > 3) {
+  if (pathnameParts.length > 4) {
     res.writeHead(404);
     res.end(constants.NOT_FOUND_MESSAGE);
   }
   try {
     switch(method) {
       case 'GET': {
-        if (pathnameParts.length === 3) {
-          const id = pathnameParts[2];
+        if (pathnameParts.length === 4) {
+          const id = pathnameParts[3];
           const user = db.getUserById(id);
           if (!validate(id)) {
             res.writeHead(400);
@@ -61,8 +58,8 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
         break;
       }
       case 'DELETE': {
-        if (pathnameParts.length === 3) {
-          const id = pathnameParts[2];
+        if (pathnameParts.length === 4) {
+          const id = pathnameParts[3];
           if (!validate(id)) {
             res.writeHead(400);
             res.end(constants.INVALID_ID_MESSAGE);
@@ -85,8 +82,8 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
         break;
       }
       case 'PUT': {
-        if (pathnameParts.length === 3) {
-          const id = pathnameParts[2];
+        if (pathnameParts.length === 4) {
+          const id = pathnameParts[3];
           if (!validate(id)) {
             res.writeHead(400);
             res.end(constants.INVALID_ID_MESSAGE);
