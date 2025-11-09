@@ -112,8 +112,10 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
         break;
       }
     }
-  } catch {
-    res.writeHead(500, constants.SERVER_ERROR_MESSAGE);
+  } catch(error) {
+    console.error(error);
+    res.writeHead(500);
+    res.end(constants.SERVER_ERROR_MESSAGE);
   }
 }
 
